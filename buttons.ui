@@ -30,6 +30,16 @@
      <string>Add</string>
     </property>
    </widget>
+   <widget class="QLineEdit" name="label">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>150</y>
+      <width>381</width>
+      <height>291</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
