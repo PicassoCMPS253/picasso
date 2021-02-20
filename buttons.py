@@ -18,7 +18,7 @@ class UI_MainWindow(QWidget):
         self.setLayout(layout)
 
     def openfolder(self):
-        while true: 
+        while True: 
             path = os.getcwd()
             file = QFileDialog.getOpenFileName(self, "Open an image", path)#this line opens the directory of the current path. 
             self.label.setPixmap(QPixmap(file)) #this line just opens the photo
