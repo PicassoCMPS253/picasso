@@ -122,12 +122,3 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Image here"))
         self.addButton.setText(_translate("MainWindow", "Add"))
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
