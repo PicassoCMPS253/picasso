@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap, QIcon
 
 
-listofpics = [1,2,3]
+listofpics = []
 class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def __init__(self,parent=None):
@@ -14,16 +14,17 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.setupUi(self)
         self.show()
         self.ui.addButton.clicked.connect(self.pressed_okay)
+        self.ui.gridLayoutWidget.setGeometry(QtCore.QRect(210, 90, 531, 361))
+        self.ui.gridLayout.addWidget(self.ui.verticalScrollBar, 0, 3, 1, len(listofpics))
         self.loadImages()
 
 
     def pressed_okay(self):
         path = os.getcwd()
-        file = QFileDialog.getOpenFileName(self, "Add a Folder", path, "(*.png, *.png, *.jpg, *.jpeg)")
-        file.setFilter(QDir.Dirs)
-        for f in os.scan(path):
-            if f.path.endswith(".png") or f.path.endswith(".jpeg") or f.path.endswith(".jpg"):
-                listofpics.append(f.path)
+        file = QFileDialog.getOpenFileNames(self,"name",path,'Image Files(*.png *.jpg *.bmp *.xpm)')
+        listofpics.append(file[0][0])
+        self.ui.gridLayout.addWidget(self.ui.verticalScrollBar, 0, 3, len(listofpics), 1)
+        self.loadImages()
 
 
     def placeInGrid(self, n):
@@ -53,9 +54,6 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return(row,col,1,1)
 
 
-
-
-
     def loadImages(self):
         '''
          My algorithm is:
@@ -68,15 +66,18 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         labelsNames = []
         for i in range(len(listofpics)):
             labelsNames.append("label_"+str(i))
-        print(labelsNames)
         # Create the label instances
         for i in range(len(listofpics)):
             labelsNames[i] = QtWidgets.QLabel(self.ui.gridLayoutWidget)
-            labelsNames[i].setObjectName(str(labelsNames[i]))
-            labelsNames[i].setText("TEST")
 
             # Place the label in its correct place in the grid
             self.ui.gridLayout.addWidget(labelsNames[i], self.placeInGrid(i)[0], self.placeInGrid(i)[1],1,1)
+
+            labelsNames[i].setObjectName(str(labelsNames[i]))
+            labelsNames[i].setText("")
+            labelsNames[i].setPixmap(QPixmap(listofpics[i]).scaled(150,120))
+
+
    
 
 
