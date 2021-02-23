@@ -22,8 +22,9 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def pressed_okay(self):
         path = os.getcwd()
         file = QFileDialog.getOpenFileNames(self,"name",path,'Image Files(*.png *.jpg *.bmp *.xpm)')
-        listofpics.append(file[0][0])
-        self.ui.gridLayout.addWidget(self.ui.verticalScrollBar, 0, 3, len(listofpics), 1)
+        for i in range(len(file[0])): # Load all images at one click add
+            listofpics.append(file[0][i])
+        self.ui.gridLayout.addWidget(self.ui.verticalScrollBar, 0, 3, len(listofpics), 1) # NOTE we may need to refactor this line later #Update the scroll bar grid with every add
         self.loadImages()
 
 
