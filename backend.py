@@ -52,7 +52,7 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         row = n//numberOfColumns
         col = n%numberOfColumns
         
-        return(row,col,1,1)
+        return(row,col,1,1) 
 
 
     def loadImages(self):
@@ -65,6 +65,7 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         
         # Create a list with the label names
         labelsNames = []
+        
         for i in range(len(listofpics)):
             labelsNames.append("label_"+str(i))
         # Create the label instances
@@ -72,7 +73,7 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             labelsNames[i] = QtWidgets.QLabel(self.ui.gridLayoutWidget)
 
             # Place the label in its correct place in the grid
-            self.ui.gridLayout.addWidget(labelsNames[i], self.placeInGrid(i)[0], self.placeInGrid(i)[1],1,1)
+            self.ui.gridLayout.addWidget(labelsNames[i], self.placeInGrid(i)[0], self.placeInGrid(i)[1], 1, 1)
 
             labelsNames[i].setObjectName(str(labelsNames[i]))
             labelsNames[i].setText("")
