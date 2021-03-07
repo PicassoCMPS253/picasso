@@ -3,9 +3,13 @@ from UI import *
 from PyQt5.QtWidgets import QInputDialog, QLineEdit, QDialog, QFileDialog
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap, QIcon
+import face_recognition
+import numpy as np
 
 
 listofpics = []
+listOfFcaes = []
+
 class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def __init__(self,parent=None):
@@ -18,10 +22,27 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.gridLayout.addWidget(self.ui.verticalScrollBar, 0, 3, 1, len(listofpics))
         self.loadImages()
 
+    #Combo Album Functions
+    def add(self, name="Untitled"):
+        self.ui.comboAlbum.addItem(name)
+ 
+
+    def remove(self):
+        self.ui.comboAlbum.removeItem(self.ui.comboAlbum.currentIndex())
+
+ 
+
+    def rename(self):
+        text = self.ui.albumName.text()
+        if(text == ""):
+            self.ui.comboAlbum.setItemText(self.ui.comboAlbum.currentIndex(),"Untitled")
+        else:
+            self.ui.comboAlbum.setItemText(self.ui.comboAlbum.currentIndex(),text)
+        self.ui.albumName.clear()
 
     def pressed_okay(self):
         path = os.getcwd()
-        file = QFileDialog.getOpenFileNames(self,"name",path,'Image Files(*.png *.jpg *.bmp *.xpm)')
+        file = QFileDialog.getOpenFileNames(self,"name",path,'Image Files(*.png *.jpg *.bmp *.xpm *.jpeg)')
         for i in range(len(file[0])): # Load all images at one click add
             listofpics.append(file[0][i])
         self.ui.gridLayout.addWidget(self.ui.verticalScrollBar, 0, 3, len(listofpics), 1) # NOTE we may need to refactor this line later #Update the scroll bar grid with every add
@@ -55,6 +76,8 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return(row,col,1,1) 
 
 
+
+
     def loadImages(self):
         '''
          My algorithm is:
@@ -78,12 +101,27 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             labelsNames[i].setObjectName(str(labelsNames[i]))
             labelsNames[i].setText("")
             labelsNames[i].setPixmap(QPixmap(listofpics[i]).scaled(150,120))
+        
+        face_rec(self,listofpics)
 
+def face_rec(self,imagesList):
 
-   
+        print("called")
+        for i in imagesList:
 
+            print(i)
 
+            known_image = face_recognition.load_image_file(i)
+            encoding = face_recognition.face_encodings(known_image)[0]
+            encoding = encoding.tolist()
 
+            if encoding not in listOfFcaes:
+                listOfFcaes.append(encoding)
+                print("New pic")
+                AppWindow.add(self)
+
+            else: 
+                print("already there")
 
 
 if __name__ == "__main__":
