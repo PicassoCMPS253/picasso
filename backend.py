@@ -106,10 +106,9 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 def face_rec(self,imagesList):
 
-        print("called")
+        
         for i in imagesList:
-
-            print(i)
+            
 
             known_image = face_recognition.load_image_file(i)
             encoding = face_recognition.face_encodings(known_image)[0]
@@ -117,11 +116,7 @@ def face_rec(self,imagesList):
 
             if encoding not in listOfFcaes:
                 listOfFcaes.append(encoding)
-                print("New pic")
-                AppWindow.add(self)
-
-            else: 
-                print("already there")
+                AppWindow.add(self, "Untitled")
 
 
 if __name__ == "__main__":
