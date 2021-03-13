@@ -1,20 +1,44 @@
 import cv2
+import face_recognition
+import os
+from PIL import UnidentifiedImageError
 
-# Function takes imagePath as paramter and returns an image with detected faces
-def detectFaces(imagePath):
-    image = cv2.imread("<image path>") # Read image
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # Convert image to gray
 
-    faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
-    faces = faceCascade.detectMultiScale(
-            gray,
-            scaleFactor=1.3,
-            minNeighbors=3,
-            minSize=(30, 30)
-    )
+def loadImagesFromFodler(folder):
+    images = os.listdir(folder)
+    return (images)
 
-    for (x, y, w, h) in faces:
-        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+def faceExists(folder):
+    
+    knownImages = []
 
-    status = cv2.imwrite('faces_detected.jpg', image)
+    imagesList = loadImagesFromFodler(folder)
+
+    for i in range(len(imagesList)):
+
+
+        try:
+            image = face_recognition.load_image_file(folder+"/"+imagesList[i])
+            imageEncode = face_recognition.face_encodings(image)[0]
+            result = face_recognition.compare_faces(knownImages,imageEncode)
+            knownImages.append(imageEncode)
+            print(result)
+        except UnidentifiedImageError:
+            print("NON IMAGE OBJECT!")
+
+
+    '''
+    cImage = face_recognition.load_image_file("testDB/c1.jpeg")
+    unknownImage = face_recognition.load_image_file("testDB/c2.jpeg")
+    
+    cinco = face_recognition.face_encodings(cImage)[0]
+    unknownImageInco = face_recognition.face_encodings(unknownImage)[0]
+
+    result = face_recognition.compare_faces(knownImages,unknownImageInco)
+    print(result)
+    '''
+
+
+
+faceExists("testDB")

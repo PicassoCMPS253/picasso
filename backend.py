@@ -102,7 +102,7 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             labelsNames[i].setText("")
             labelsNames[i].setPixmap(QPixmap(listofpics[i]).scaled(150,120))
         
-        face_rec(self,listofpics)
+        #face_rec(self,listofpics)
 
 def face_rec(self,imagesList):
 
@@ -111,7 +111,8 @@ def face_rec(self,imagesList):
             
 
             known_image = face_recognition.load_image_file(i)
-            encoding = face_recognition.face_encodings(known_image)[0]
+            print(known_image)
+            encoding = face_recognition.face_encodings(known_image)
             encoding = encoding.tolist()
 
             if encoding not in listOfFcaes:
