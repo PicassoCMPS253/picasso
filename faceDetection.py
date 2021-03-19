@@ -2,8 +2,9 @@ import cv2
 import face_recognition
 import os
 from PIL import UnidentifiedImageError
+import json
 
-
+data = {}
 
 def loadImagesFromFodler(folder):
     images = os.listdir(folder)
@@ -11,34 +12,47 @@ def loadImagesFromFodler(folder):
 
 def faceExists(folder):
     
-    knownImages = []
+    knownEncodings = []
 
     imagesList = loadImagesFromFodler(folder)
 
     for i in range(len(imagesList)):
-
-
+        
+        name = "Untitled"+str(i)
+        realName = imagesList[i].split(".")
         try:
             image = face_recognition.load_image_file(folder+"/"+imagesList[i])
             imageEncode = face_recognition.face_encodings(image)[0]
-            result = face_recognition.compare_faces(knownImages,imageEncode)
-            knownImages.append(imageEncode)
-            print(result)
+            result = face_recognition.compare_faces(knownEncodings,imageEncode) # Pass this to function checkResult
+
+            if (checkResult(result) != -1): # Face already there
+                knownEncodings.append(imageEncode)
+                data["Untitled"+str(checkResult(result)+1)].append(imagesList[i])
+
+            else: # New face
+                knownEncodings.append(imageEncode)
+                data[realName[0]] = [imagesList[i]]
+            
         except UnidentifiedImageError:
-            print("NON IMAGE OBJECT!")
+            print()
 
-
-    '''
-    cImage = face_recognition.load_image_file("testDB/c1.jpeg")
-    unknownImage = face_recognition.load_image_file("testDB/c2.jpeg")
+    with open("sample.json","w") as outfile:
+        json.dump(data, outfile)
     
-    cinco = face_recognition.face_encodings(cImage)[0]
-    unknownImageInco = face_recognition.face_encodings(unknownImage)[0]
+    print(data)
 
-    result = face_recognition.compare_faces(knownImages,unknownImageInco)
-    print(result)
-    '''
 
+def checkResult(resultArray):
+
+    if not resultArray:
+        return -1 # List is empty
+    
+    for i in range(len(resultArray)):
+        if resultArray[i]==True:
+            return i
+
+    return -1
+    
 
 
 faceExists("testDB")
