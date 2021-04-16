@@ -1,20 +1,52 @@
-import cv2
+import face_recognition
+from PIL import UnidentifiedImageError
+import json
 
-# Function takes imagePath as paramter and returns an image with detected faces
-def detectFaces(imagePath):
-    image = cv2.imread("<image path>") # Read image
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # Convert image to gray
+albums = {}
 
-    faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
-    faces = faceCascade.detectMultiScale(
-            gray,
-            scaleFactor=1.3,
-            minNeighbors=3,
-            minSize=(30, 30)
-    )
+def faceExists(imagesList):
+    
+    knownEncodings = []
 
-    for (x, y, w, h) in faces:
-        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    index = 0
+    for i in range(len(imagesList)):
+        
+        
 
-    status = cv2.imwrite('faces_detected.jpg', image)
+        try:
+            image = face_recognition.load_image_file(imagesList[i])
+
+            try:
+                imageEncode = face_recognition.face_encodings(image)[0]
+                result = face_recognition.compare_faces(knownEncodings,imageEncode) # Pass this to function checkResult
+
+                if (checkResult(result) != -1): # Face already there
+                    knownEncodings.append(imageEncode)
+                    #data["Untitled"+str(checkResult(result))].append(imagesList[i])
+                    albums[name].append(imagesList[i])
+
+                else: # New face
+                    name = "Untitled"+str(index)
+                    knownEncodings.append(imageEncode)
+                    albums[name] = [imagesList[i]]
+                    index += 1 
+
+            except IndexError:
+                print("no faces in the image")
+
+        except UnidentifiedImageError:
+            print("non image added")
+
+    # Add All Albums Album
+
+def checkResult(resultArray):
+
+    if not resultArray:
+        return -1 # List is empty
+    
+    for i in range(len(resultArray)):
+        if resultArray[i]==True:
+            return i
+
+    return -1
