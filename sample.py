@@ -20,9 +20,6 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         #Add Folder Button
-        self.addFolder = QtWidgets.QPushButton(self.centralwidget)
-        self.addFolder.setGeometry(QtCore.QRect(470, 40, 113, 32))
-        self.addFolder.setObjectName("addFolder")
         #Add Image Button
         self.addImage = QtWidgets.QPushButton(self.centralwidget)
         self.addImage.setGeometry(QtCore.QRect(630, 40, 113, 32))
@@ -57,7 +54,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         #Scroll Area
         self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
-        self.scrollArea.setGeometry(QtCore.QRect(340, 110, 481, 481))
+        self.scrollArea.setGeometry(QtCore.QRect(340, 110, 830, 481))
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaContents = QtWidgets.QWidget()
@@ -88,7 +85,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.addFolder.setText(_translate("MainWindow", "Add Folder"))
         self.addImage.setText(_translate("MainWindow", "Add Photo"))
         self.Album.setText(_translate("MainWindow", "Album"))
         self.rename.setText(_translate("MainWindow", "Rename"))
