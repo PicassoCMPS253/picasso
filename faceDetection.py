@@ -1,8 +1,14 @@
 import face_recognition
 from PIL import UnidentifiedImageError
 import json
+from pathlib import Path
+currentWorkingDirectory = Path(__file__).parent.absolute()
 
-albums = {}
+try:
+    with open(str(currentWorkingDirectory)+'/db.json', 'r') as json_file:
+        albums = json.load(json_file)
+except ValueError:
+    albums = {}
 
 
 def faceExists(imagesList):
@@ -16,8 +22,8 @@ def faceExists(imagesList):
 
         try:
             image = face_recognition.load_image_file(imagesList[i])
-
             try:
+                
                 imageEncode = face_recognition.face_encodings(image)[0]
                 result = face_recognition.compare_faces(knownEncodings,imageEncode) # Pass this to function checkResult
 
@@ -37,6 +43,14 @@ def faceExists(imagesList):
 
         except UnidentifiedImageError:
             print("non image added")
+
+    with open(str(currentWorkingDirectory)+'/db.json', 'w') as json_file:
+        try:
+            albums["All Photos"] = albums["All Photos"]
+        except:
+            albums["All Photos"] = listofpics
+
+        json.dump(albums, json_file)
 
     # Add All Albums Album
 

@@ -6,12 +6,30 @@ from PyQt5.QtGui import QPixmap, QIcon
 import face_recognition
 import numpy as np
 from faceDetection import *
+import json
+
+try:
+    listofpics = albums["All Photos"]
+except:
+    listofpics = []
+
+try:
+    albums["All Photos"] = albums["All Photos"]
+except:
+    albums["All Photos"] = listofpics
 
 
-listofpics = []
-albums["All Photos"] = listofpics
-names = {"All Photos":"All Photos"}
+try:
+    with open(str(currentWorkingDirectory)+'/albumsNamingDB.json', 'r') as json_file:
+        names = json.load(json_file)
+except ValueError:
+    names = {"All Photos":"All Photos"}
+
+
+
 width = 481
+print(listofpics)
+
 
 
 class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -24,6 +42,8 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ui.rename.clicked.connect(self.rename)
         self.ui.gridLayoutWidget.setGeometry(QtCore.QRect(210, 90, 531, 361))
         self.loadImages()
+        self.loadAlbums()
+        self.loadNames()
         self.ui.comboBox.currentTextChanged.connect(self.comboChanged)
 
 
@@ -39,16 +59,20 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
  
 
     def rename(self):
-        currentName = self.ui.comboBox.currentText()
         text = self.ui.input.text()
 
-        names[text] = currentName
 
         currentIndex = self.ui.comboBox.currentIndex()
+        
+        if(text != "" and currentIndex!=0):
 
-        if(text != ""):
-            #albums[text] = albums.pop(self.ui.comboBox.currentText())
+            currentName = self.ui.comboBox.currentText()
+            names[text] = currentName
             self.ui.comboBox.setItemText(currentIndex, text)
+            del names[currentName]
+            with open(str(currentWorkingDirectory)+'/albumsNamingDB.json', 'w') as json_file:
+                json.dump(names, json_file)
+
 
         self.ui.input.clear()
 
@@ -70,16 +94,10 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         file = QFileDialog.getOpenFileNames(self,"name",path, "Images (*.jpg *.png *.jpeg)")
         
         listofpics.extend(file[0]) # Merge list of pics with the added files
+        print(listofpics)
 
         faceExists(listofpics) # Update the albums dict with faces in albums
-
-        comboItems = [self.ui.comboBox.itemText(i) for i in range(self.ui.comboBox.count())] # List of albums in the comboBox
-        
-        for element in sorted(albums): # add albums to the comboBox
-            if element not in comboItems:
-                  self.add(element)
-                  names[element]=element
-
+        self.loadAlbums()
         self.ui.comboBox.setCurrentIndex(0) # When adding a picture(s) send the user back to the all photos album
         
         self.loadImages()
@@ -137,6 +155,36 @@ class AppWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             labelsNames[i].setText("")
             labelsNames[i].setPixmap(QPixmap(list(albums[album])[i]).scaled(250,250))
             labelsNames[i].setScaledContents(False)
+
+    def loadAlbums(self):
+        comboItems = [self.ui.comboBox.itemText(i) for i in range(self.ui.comboBox.count())] # List of albums in the comboBox
+        index = 1
+        for element in sorted(albums): # add albums to the comboBox
+            print(element)
+            if element not in comboItems and ((self.findKeyByValue(names,element)) == None):
+                    self.add(element)
+                    if (self.findKeyByValue(names,element)) == None:
+                        names[element]=element
+
+
+    def loadNames(self):
+        comboItems = [self.ui.comboBox.itemText(i) for i in range(self.ui.comboBox.count())] # List of albums in the comboBox
+
+        for i in comboItems:
+            if i in names.values():
+                itemIndex = 0
+                for itemIndex in range(len(comboItems)):
+                    if i == self.ui.comboBox.itemText(itemIndex):
+                        self.ui.comboBox.setItemText(itemIndex, self.findKeyByValue(names,i))
+                        print("hit, ", self.findKeyByValue(names,i), i, names)
+                    else:
+                        print("miss", itemIndex)
+
+    def findKeyByValue(self, dict, valueE):
+        for key, value in dict.items():
+            if valueE == value:
+                return key
+
 
 
 if __name__ == "__main__":
